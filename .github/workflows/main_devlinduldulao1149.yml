@@ -27,8 +27,13 @@ jobs:
           python -m venv venv
           source venv/bin/activate
       
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      # Poetry config to avoid creating a virtualenv as the GitHub runner will already be in one
+      - name: Configure Poetry
+        run: |
+          poetry config virtualenvs.create false
+
+      - name: Install dependencies using Poetry
+        run: poetry install
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
