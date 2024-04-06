@@ -22,10 +22,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Create and start virtual environment
+      # Set up Poetry
+      - name: Install Poetry
         run: |
-          python -m venv venv
-          source venv/bin/activate
+          curl -sSL https://install.python-poetry.org | python3 -
       
       # Poetry config to avoid creating a virtualenv as the GitHub runner will already be in one
       - name: Configure Poetry
