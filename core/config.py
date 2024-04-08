@@ -27,7 +27,8 @@ class Settings(AzureActiveDirectory):
     # e.g: '['http://localhost', 'http://localhost:4200', 'http://localhost:3000', \
     # 'http://localhost:8080', 'http://local.dockertoolbox.tiangolo.com']'
     BACKEND_CORS_ORIGINS: List[Union[str, AnyHttpUrl]] = [
-        'http://localhost', 'http://localhost:3000', 'http://localhost:8080'
+        'http://localhost', 'http://localhost:3000', 'http://localhost:8080',
+        'https://lemon-sea-0d997b303.5.azurestaticapps.net'
     ]
 
     PROJECT_NAME: str = 'My Project'
