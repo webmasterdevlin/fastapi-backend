@@ -59,21 +59,21 @@ async def load_config() -> None:
     await azure_scheme.openid_config.load_config()
 
 
-app.include_router(
-    api_router_azure_auth,
-    prefix=settings.API_V1_STR,
-    dependencies=[Security(azure_scheme, scopes=['user_impersonation'])],
-)
-app.include_router(
-    api_router_multi_auth,
-    prefix=settings.API_V1_STR,
-    # Dependencies specified on the API itself
-)
-app.include_router(
-    api_router_graph,
-    prefix=settings.API_V1_STR,
-    # Dependencies specified on the API itself
-)
+# app.include_router(
+#     api_router_azure_auth,
+#     prefix=settings.API_V1_STR,
+#     dependencies=[Security(azure_scheme, scopes=['user_impersonation'])],
+# )
+# app.include_router(
+#     api_router_multi_auth,
+#     prefix=settings.API_V1_STR,
+#     # Dependencies specified on the API itself
+# )
+# app.include_router(
+#     api_router_graph,
+#     prefix=settings.API_V1_STR,
+#     # Dependencies specified on the API itself
+# )
 
 if __name__ == '__main__':
     parser = ArgumentParser()
