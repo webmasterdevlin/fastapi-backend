@@ -7,7 +7,7 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",  # React app's origin in development
     "http://localhost:8080",  # React app's origin in development
-    "https://your-react-app-production-domain.com",  # React app's production domain
+    "https://lemon-sea-0d997b303.5.azurestaticapps.net",  # React app's production domain
 ]
 
 app.add_middleware(
