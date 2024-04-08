@@ -10,6 +10,14 @@ on:
   workflow_dispatch:
 
 env:
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  APP_CLIENT_ID: ${{ secrets.APP_CLIENT_ID }}
+  OPENAPI_CLIENT_ID: ${{ secrets.OPENAPI_CLIENT_ID }}
+  TENANT_ID: ${{ secrets.TENANT_ID }}
+  GRAPH_SECRET: ${{ secrets.GRAPH_SECRET }}
+  AUTH_URL: ${{ secrets.AUTH_URL }}
+  CONFIG_URL: ${{ secrets.CONFIG_URL }}
+  TOKEN_URL: ${{ secrets.TOKEN_URL }}
 
 jobs:
   build:
