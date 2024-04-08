@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import Optional, Union
 
-from demo_project.core.config import settings
+from core.config import settings
 from fastapi import Depends
 from fastapi.security.api_key import APIKeyHeader
 

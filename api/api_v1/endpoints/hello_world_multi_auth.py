@@ -1,7 +1,7 @@
 from typing import Dict, Union
 
-from demo_project.api.dependencies import multi_auth, multi_auth_b2c
-from demo_project.schemas.hello_world import TokenType
+from api.dependencies import multi_auth, multi_auth_b2c
+from schemas.hello_world import TokenType
 from fastapi import APIRouter, Depends, Request
 
 from fastapi_azure_auth.user import User

@@ -1,7 +1,7 @@
 from typing import Dict, Union
 
-from demo_project.api.dependencies import validate_is_admin_user
-from demo_project.schemas.hello_world import HelloWorldResponse
+from api.dependencies import validate_is_admin_user
+from schemas.hello_world import HelloWorldResponse
 from fastapi import APIRouter, Depends, Request
 
 from fastapi_azure_auth.user import User

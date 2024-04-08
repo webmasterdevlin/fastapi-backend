@@ -1,8 +1,8 @@
 from typing import Any
 
 import httpx
-from demo_project.api.dependencies import azure_scheme
-from demo_project.core.config import settings
+from api.dependencies import azure_scheme
+from core.config import settings
 from fastapi import APIRouter, Depends, Request
 from httpx import AsyncClient
 from jose import jwt
