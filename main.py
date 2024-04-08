@@ -41,6 +41,8 @@ if settings.BACKEND_CORS_ORIGINS:  # pragma: no cover
     )
 
 
+
+
 @app.get("/api/")
 async def root():
     return {"message": "Hello World"}
@@ -51,12 +53,12 @@ async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
 
-@app.on_event('startup')
-async def load_config() -> None:
-    """
-    Load OpenID config on startup.
-    """
-    await azure_scheme.openid_config.load_config()
+# @app.on_event('startup')
+# async def load_config() -> None:
+#     """
+#     Load OpenID config on startup.
+#     """
+#     await azure_scheme.openid_config.load_config()
 
 
 # app.include_router(
@@ -75,12 +77,12 @@ async def load_config() -> None:
 #     # Dependencies specified on the API itself
 # )
 
-if __name__ == '__main__':
-    parser = ArgumentParser()
-    parser.add_argument('--api', action='store_true')
-    parser.add_argument('--reload', action='store_true')
-    args = parser.parse_args()
-    if args.api:
-        uvicorn.run('main:app', reload=args.reload)
-    else:
-        raise ValueError('No valid combination of arguments provided.')
+# if __name__ == '__main__':
+#     parser = ArgumentParser()
+#     parser.add_argument('--api', action='store_true')
+#     parser.add_argument('--reload', action='store_true')
+#     args = parser.parse_args()
+#     if args.api:
+#         uvicorn.run('main:app', reload=args.reload)
+#     else:
+#         raise ValueError('No valid combination of arguments provided.')
