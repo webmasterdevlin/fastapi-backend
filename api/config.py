@@ -1,27 +1,15 @@
 from pydantic import Field, computed_field, PostgresDsn
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Any, Literal
-
-def parse_cors(v: Any) -> list[str] | str:
-    if isinstance(v, str) and not v.startswith("["):
-        return [i.strip() for i in v.split(",")]
-    elif isinstance(v, list | str):
-        return v
-    raise ValueError(v)
+from typing import Literal
 
 # This is where sensitive and non-sensitive information is defined
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=".env", env_ignore_empty=True, extra="ignore"
-    )
-
     # General settings not in secrets manager
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
     PROJECT_NAME: str = Field(default='FastAPI backend')
     API_PREFIX: str = '/api'
     POSTGRES_PORT: int = 5432
-
 
     # Non-sensitive Microsoft Entra ID settings
     AUTH_URL: str = "https://login.microsoftonline.com/"
@@ -53,4 +41,9 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
     
+    model_config = SettingsConfigDict(
+        env_file=".env", env_ignore_empty=True, extra="ignore"
+    )
+
+
 settings = Settings()  # type: ignore
