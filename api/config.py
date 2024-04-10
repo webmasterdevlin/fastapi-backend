@@ -1,9 +1,7 @@
-import secrets
-import warnings
-from pydantic import AnyUrl, BeforeValidator, Field, computed_field, PostgresDsn, model_validator, validator
+from pydantic import Field, computed_field, PostgresDsn
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Annotated, Any, Literal, Self
+from typing import Any, Literal
 
 def parse_cors(v: Any) -> list[str] | str:
     if isinstance(v, str) and not v.startswith("["):
@@ -22,9 +20,6 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = Field(default='FastAPI backend')
     API_PREFIX: str = '/api'
     DOMAIN: str = "http://localhost"
-    BACKEND_CORS_ORIGINS: Annotated[
-        list[AnyUrl] | str, BeforeValidator(parse_cors)
-    ] = []
 
     # Microsoft Entra ID settings
     OPENAPI_CLIENT_ID: str

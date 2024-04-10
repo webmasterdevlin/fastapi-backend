@@ -1,12 +1,12 @@
 import logging
-import dotenv
+
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.config import settings
 
 log = logging.getLogger(__name__)
-dotenv.load_dotenv()
+
 
 def get_url():
     user = settings.POSTGRES_USER
@@ -31,7 +31,11 @@ app = FastAPI(
 )
 
 # Define a list of origins that should be permitted to make cross-origin requests
-origins = settings.BACKEND_CORS_ORIGINS
+origins = [
+    "http://localhost:3000",  # React app's origin in development
+    "http://localhost:8080",  # React app's origin in development
+    "https://lemon-sea-0d997b303.5.azurestaticapps.net",  # React app's production domain
+]
 prefix = settings.API_PREFIX
 app.add_middleware(
         CORSMiddleware,

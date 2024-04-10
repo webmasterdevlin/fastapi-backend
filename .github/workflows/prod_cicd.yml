@@ -44,7 +44,6 @@ jobs:
           TOKEN_URL= https://login.microsoftonline.com/TOKEN_URL
           DOMAIN=https://devlin-master.azurewebsites.net
           ENVIRONMENT=production
-          BACKEND_CORS_ORIGINS=https://lemon-sea-0d997b303.5.azurestaticapps.net
           POSTGRES_SERVER=devlin-master.postgres.database.azure.com
           POSTGRES_PORT=5432
           POSTGRES_USER=postgres
