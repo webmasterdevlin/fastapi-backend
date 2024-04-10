@@ -1,16 +1,30 @@
-from pydantic import Field, computed_field, PostgresDsn
+import secrets
+import warnings
+from pydantic import AnyUrl, BeforeValidator, Field, computed_field, PostgresDsn, model_validator, validator
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, Self
+
+def parse_cors(v: Any) -> list[str] | str:
+    if isinstance(v, str) and not v.startswith("["):
+        return [i.strip() for i in v.split(",")]
+    elif isinstance(v, list | str):
+        return v
+    raise ValueError(v)
 
 # This is where sensitive and non-sensitive information is defined
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env", env_ignore_empty=True, extra="ignore"
     )
+
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
     PROJECT_NAME: str = Field(default='FastAPI backend')
     API_PREFIX: str = '/api'
+    DOMAIN: str = "http://localhost"
+    BACKEND_CORS_ORIGINS: Annotated[
+        list[AnyUrl] | str, BeforeValidator(parse_cors)
+    ] = []
 
     # Microsoft Entra ID settings
     OPENAPI_CLIENT_ID: str
@@ -18,13 +32,13 @@ class Settings(BaseSettings):
     APP_CLIENT_ID: str
     AUTH_URL: str
     CONFIG_URL: str
-    TOKEN_URL: str = 2
+    TOKEN_URL: str
     GRAPH_SECRET: str
     CLIENT_SECRET: str
 
     # Postgres settings
     POSTGRES_SERVER: str
-    POSTGRES_PORT: int
+    POSTGRES_PORT: int = 5432
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
@@ -40,6 +54,5 @@ class Settings(BaseSettings):
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
         )
-
-
+    
 settings = Settings()  # type: ignore
