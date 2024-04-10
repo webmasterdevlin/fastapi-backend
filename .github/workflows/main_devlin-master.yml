@@ -15,11 +15,23 @@ env:
   OPENAPI_CLIENT_ID: ${{ secrets.OPENAPI_CLIENT_ID }}
   TENANT_ID: ${{ secrets.TENANT_ID }}
   GRAPH_SECRET: ${{ secrets.GRAPH_SECRET }}
+  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
 
 # No need to set these in secrets, as they are public
-  AUTH_URL: ${{ secrets.AUTH_URL }}
-  CONFIG_URL: ${{ secrets.CONFIG_URL }}
-  TOKEN_URL: ${{ secrets.TOKEN_URL }}
+  AUTH_URL: "https://login.microsoftonline.com/AUTH_URL"
+  CONFIG_URL: "https://login.microsoftonline.com/CONFIG_URL"
+  TOKEN_URL: "https://login.microsoftonline.com/TOKEN_URL"
+
+  DOMAIN: "https://devlin-master.azurewebsites.net"
+  ENVIRONMENT: "production"
+  BACKEND_CORS_ORIGINS: "https://lemon-sea-0d997b303.5.azurestaticapps.net"
+  
+  # sample azure sql database server instance
+  POSTGRES_SERVER: "devlin-master.postgres.database.azure.com"
+  POSTGRES_PORT: "5432"
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  POSTGRES_DB : ${{ secrets.POSTGRES_DB }}
 
 jobs:
   build:
