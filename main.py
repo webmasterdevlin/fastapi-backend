@@ -1,12 +1,12 @@
 import logging
-
+import dotenv
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.config import settings
 
 log = logging.getLogger(__name__)
-
+dotenv.load_dotenv()
 
 def get_url():
     user = settings.POSTGRES_USER

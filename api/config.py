@@ -14,9 +14,9 @@ def parse_cors(v: Any) -> list[str] | str:
 
 # This is where sensitive and non-sensitive information is defined
 class Settings(BaseSettings):
-    # model_config = SettingsConfigDict(
-    #     env_file=".env", env_ignore_empty=True, extra="ignore"
-    # )
+    model_config = SettingsConfigDict(
+        env_file=".env", env_ignore_empty=True, extra="ignore"
+    )
 
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
     PROJECT_NAME: str = Field(default='FastAPI backend')
