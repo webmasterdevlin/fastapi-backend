@@ -9,55 +9,36 @@ on:
       - main
   workflow_dispatch:
 
-# env:
-#   SECRET_KEY: ${{ secrets.SECRET_KEY }}
-#   APP_CLIENT_ID: ${{ secrets.APP_CLIENT_ID }}
-#   OPENAPI_CLIENT_ID: ${{ secrets.OPENAPI_CLIENT_ID }}
-#   TENANT_ID: ${{ secrets.TENANT_ID }}
-#   GRAPH_SECRET: ${{ secrets.GRAPH_SECRET }}
-#   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-
-# # No need to set these in secrets, as they are public
-#   AUTH_URL: "https://login.microsoftonline.com/AUTH_URL"
-#   CONFIG_URL: "https://login.microsoftonline.com/CONFIG_URL"
-#   TOKEN_URL: "https://login.microsoftonline.com/TOKEN_URL"
-
-#   DOMAIN: "https://devlin-master.azurewebsites.net"
-#   ENVIRONMENT: "production"
-#   BACKEND_CORS_ORIGINS: "https://lemon-sea-0d997b303.5.azurestaticapps.net"
-  
-#   # sample azure sql database server instance
-#   POSTGRES_SERVER: "devlin-master.postgres.database.azure.com"
-#   POSTGRES_PORT: "5432"
-#   POSTGRES_USER: "postgres"
-#   POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-#   POSTGRES_DB : ${{ secrets.POSTGRES_DB }}
-
 jobs:
   build:
     runs-on: 'ubuntu-latest'
 
+    env:
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      APP_CLIENT_ID: ${{ secrets.APP_CLIENT_ID }}
+      OPENAPI_CLIENT_ID: ${{ secrets.OPENAPI_CLIENT_ID }}
+      TENANT_ID: ${{ secrets.TENANT_ID }}
+      GRAPH_SECRET: ${{ secrets.GRAPH_SECRET }}
+      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+
+    # No need to set these in secrets, as they are public
+      AUTH_URL: "https://login.microsoftonline.com/AUTH_URL"
+      CONFIG_URL: "https://login.microsoftonline.com/CONFIG_URL"
+      TOKEN_URL: "https://login.microsoftonline.com/TOKEN_URL"
+
+      DOMAIN: "https://devlin-master.azurewebsites.net"
+      ENVIRONMENT: "production"
+      BACKEND_CORS_ORIGINS: "https://lemon-sea-0d997b303.5.azurestaticapps.net"
+      
+      # sample azure sql database server instance
+      POSTGRES_SERVER: "devlin-master.postgres.database.azure.com"
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB : ${{ secrets.POSTGRES_DB }}
+      
     steps:
     - uses: actions/checkout@v2
-    - name: Export Environment Variables
-      run: |
-        export DOMAIN="https://devlin-master.azurewebsites.net"
-        export ENVIRONMENT=prod
-        export BACKEND_CORS_ORIGINS="https://lemon-sea-0d997b303.5.azurestaticapps.net"
-        export SECRET_KEY=${{ secrets.SECRET_KEY }}
-        export APP_CLIENT_ID=${{ secrets.APP_CLIENT_ID }}
-        export OPENAPI_CLIENT_ID=${{ secrets.OPENAPI_CLIENT_ID }}
-        export TENANT_ID=${{ secrets.TENANT_ID }}
-        export GRAPH_SECRET=${{ secrets.GRAPH_SECRET }}
-        export CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}
-        export AUTH_URL="https://login.microsoftonline.com/AUTH_URL"
-        export CONFIG_URL="https://login.microsoftonline.com/CONFIG_URL"
-        export TOKEN_URL="https://login.microsoftonline.com/TOKEN_URL"
-        export POSTGRES_SERVER="devlin-master.postgres.database.azure.com"
-        export POSTGRES_PORT=5432
-        export POSTGRES_USER=postgres
-        export POSTGRES_PASSWORD=pass
-        export POSTGRES_DB=prod_db
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
