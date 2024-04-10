@@ -16,24 +16,27 @@ class Settings(BaseSettings):
         env_file=".env", env_ignore_empty=True, extra="ignore"
     )
 
+    # General settings not in secrets manager
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
     PROJECT_NAME: str = Field(default='FastAPI backend')
     API_PREFIX: str = '/api'
-    DOMAIN: str = "http://localhost"
+    POSTGRES_PORT: int = 5432
 
-    # Microsoft Entra ID settings
+
+    # Non-sensitive Microsoft Entra ID settings
+    AUTH_URL: str = "https://login.microsoftonline.com/"
+    CONFIG_URL: str = "https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration"
+    TOKEN_URL: str = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
+
+    # Sensitive Microsoft Entra ID settings
     OPENAPI_CLIENT_ID: str
     TENANT_ID: str
     APP_CLIENT_ID: str
-    AUTH_URL: str
-    CONFIG_URL: str
-    TOKEN_URL: str
     GRAPH_SECRET: str
     CLIENT_SECRET: str
 
     # Postgres settings
     POSTGRES_SERVER: str
-    POSTGRES_PORT: int = 5432
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
