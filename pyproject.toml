@@ -27,6 +27,7 @@ fastapi-azure-auth = "^4.3.1"
 mypy = "^1.9.0"
 pre-commit = "^3.7.0"
 pytest = "^8.1.1"
+pylint = "^3.1.0"
 
 [build-system]
 requires = ["poetry-core"]

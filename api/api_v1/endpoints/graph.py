@@ -2,7 +2,7 @@ from typing import Any
 
 import httpx
 from api.dependencies import azure_scheme
-from core.config import settings
+from api.config import settings
 from fastapi import APIRouter, Depends, Request
 from httpx import AsyncClient
 from jose import jwt

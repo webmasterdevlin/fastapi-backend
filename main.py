@@ -1,17 +1,24 @@
 import logging
-from argparse import ArgumentParser
 
-import uvicorn
-from api.api_v1.api import api_router_azure_auth, api_router_graph, api_router_multi_auth
-from api.dependencies import azure_scheme
-from core.config import settings
-from fastapi import FastAPI, Security
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+
+from api.config import settings
 
 log = logging.getLogger(__name__)
 
+
+def get_url():
+    user = settings.POSTGRES_USER
+    password = settings.POSTGRES_PASSWORD
+    server = settings.POSTGRES_SERVER
+    port = settings.POSTGRES_PORT
+    db = settings.POSTGRES_DB
+    return f"postgresql+psycopg://{user}:{password}@{server}:{port}/{db}"
+
+
 app = FastAPI(
-    openapi_url=f'{settings.API_V1_STR}/openapi.json',
+    openapi_url=f'{settings.API_PREFIX}/openapi.json',
     swagger_ui_oauth2_redirect_url='/oauth2-redirect',
     swagger_ui_init_oauth={
         'usePkceWithAuthorizationCodeGrant': True,
@@ -29,29 +36,35 @@ origins = [
     "http://localhost:8080",  # React app's origin in development
     "https://lemon-sea-0d997b303.5.azurestaticapps.net",  # React app's production domain
 ]
-
-# Set all CORS enabled origins
-if settings.BACKEND_CORS_ORIGINS:  # pragma: no cover
-    app.add_middleware(
+app.add_middleware(
         CORSMiddleware,
-        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],  # type: ignore
+        allow_origins=origins,  # type: ignore
         allow_credentials=True,  # type: ignore
         allow_methods=['*'],  # type: ignore
         allow_headers=['*'],  # type: ignore
     )
+router = APIRouter(
+    prefix="/api",
+)
 
 
-
-
-@app.get("/api/")
+@router.get("/")
 async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/api/hello/{name}")
+@router.get("/health")
+async def actuator():
+    url = get_url()
+    return {"status": "UP", "database_connection_url": url}
+
+
+@router.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
+
+app.include_router(router)
 
 # @app.on_event('startup')
 # async def load_config() -> None:
