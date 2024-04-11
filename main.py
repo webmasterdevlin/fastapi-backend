@@ -64,13 +64,13 @@ async def shutdown_event():
     print("Application shutdown")
 
 # TODO: Fix 401 Unauthorized error in the frontend
-@router.get("/", dependencies=[Security(azure_scheme)])
+@router.get("/", dependencies=[Security(azure_scheme, scopes=['user_impersonation'])])
 async def root():
     log.info('Root endpoint')
     return {"message": "Hello World"}
 
 
-@router.get("/health", dependencies=[Security(azure_scheme)])
+@router.get("/health", dependencies=[Security(azure_scheme, scopes=['user_impersonation'])])
 async def actuator():
     url = get_url()
     return {"status": "UP", "database_connection_url": url}
