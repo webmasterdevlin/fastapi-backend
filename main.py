@@ -63,7 +63,7 @@ async def load_config() -> None:
 async def shutdown_event():
     print("Application shutdown")
 
-
+# TODO: Fix 401 Unauthorized error in the frontend
 @router.get("/", dependencies=[Security(azure_scheme)])
 async def root():
     log.info('Root endpoint')
