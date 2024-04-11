@@ -7,7 +7,6 @@ htmlcov
 .cache
 .venv
 
-.vscode
 .idea/*
 
 .env
