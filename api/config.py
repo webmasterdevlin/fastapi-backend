@@ -1,4 +1,4 @@
-from pydantic import Field, computed_field, PostgresDsn
+from pydantic import AnyHttpUrl, Field, computed_field, PostgresDsn
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Literal
@@ -10,6 +10,11 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = Field(default='FastAPI backend')
     API_PREFIX: str = '/api'
     POSTGRES_PORT: int = 5432
+    BACKEND_CORS_ORIGINS: list[str | AnyHttpUrl] = [
+    "http://localhost:3000",  # React app's origin in development
+    "http://localhost:8080",  # React app's origin in development
+    "https://lemon-sea-0d997b303.5.azurestaticapps.net",  # React app's production domain
+]
 
     # Non-sensitive Microsoft Entra ID settings
     AUTH_URL: str = "https://login.microsoftonline.com/"
@@ -28,6 +33,32 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
+    SCOPE_DESCRIPTION: str = "user_impersonation"
+
+    @computed_field
+    @property
+    def SCOPE_NAME(self) -> str:
+        return f'api://{self.APP_CLIENT_ID}/{self.SCOPE_DESCRIPTION}'
+
+
+    @computed_field
+    @property
+    def SCOPES(self) -> dict[str, str]:
+        return {
+            self.SCOPE_NAME: self.SCOPE_DESCRIPTION,
+        }
+    
+
+    @computed_field
+    @property
+    def OPENAPI_AUTHORIZATION_URL(self) -> str:
+        return f"https://login.microsoftonline.com/{self.TENANT_ID}/oauth2/v2.0/authorize"
+
+
+    @computed_field
+    @property
+    def OPENAPI_TOKEN_URL(self) -> str:
+        return f"https://login.microsoftonline.com/{self.TENANT_ID}/oauth2/v2.0/token"
 
     @computed_field  # type: ignore[misc]
     @property
@@ -40,6 +71,8 @@ class Settings(BaseSettings):
             port=self.POSTGRES_PORT,
             path=self.POSTGRES_DB,
         )
+    
+   
     
     model_config = SettingsConfigDict(
         env_file=".env", env_ignore_empty=True, extra="ignore"
