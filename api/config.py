@@ -38,7 +38,9 @@ class Settings(BaseSettings):
     @computed_field
     @property
     def SCOPE_NAME(self) -> str:
-        return f'api://{self.APP_CLIENT_ID}/{self.SCOPE_DESCRIPTION}'
+        scope_name = f'api://{self.APP_CLIENT_ID}/{self.SCOPE_DESCRIPTION}'
+        print(scope_name)
+        return scope_name
 
 
     @computed_field
