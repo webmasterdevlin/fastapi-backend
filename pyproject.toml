@@ -19,8 +19,9 @@ python-multipart = "^0.0.9"
 psycopg = "^3.1.18"
 httpx = "^0.27.0"
 cachetools = "^5.3.3"
-ruff = "^0.3.4"
+ruff = "^0.4.1"
 fastapi-azure-auth = "^4.3.1"
+sqlmodel = "^0.0.16"
 
 
 [tool.poetry.group.dev.dependencies]
