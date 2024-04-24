@@ -50,7 +50,7 @@ ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 ENV POSTGRES_DB=$POSTGRES_DB
 
 # Command to run the application
-CMD ["poetry", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["poetry", "run", "uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "80"]
 
 # Make port 80 available to the world outside this container for azure container registry port
 EXPOSE 80
