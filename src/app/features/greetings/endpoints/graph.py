@@ -19,7 +19,17 @@ router = APIRouter()
 )
 async def graph_world(request: Request) -> Any:  # noqa: ANN401
     """
-    An example on how to use "on behalf of"-flow to fetch a graph token and then fetch data from graph.
+    :param request: The request object containing information about the HTTP request.
+    :return: A dictionary containing the user claims obtained from the access token, the OBO response, and the graph response.
+
+    This method fetches the graph API using On-Behalf-Of (OBO) authentication. The user's access token is used to obtain a new access token for the Graph API. The method then calls the `/me` endpoint of the Graph API to fetch more information about the current user. The obtained information is returned as a dictionary to the end user.
+
+    Example usage:
+
+    ```
+    response = await graph_world(request)
+    print(response)
+    ```
     """
     async with AsyncClient() as client:
         # Use the users access token and fetch a new access token for the Graph API

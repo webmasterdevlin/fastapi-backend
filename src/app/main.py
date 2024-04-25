@@ -8,6 +8,8 @@ from src.app.helpers.config import settings
 
 log = logging.getLogger(__name__)
 
+USER_IMPERSONATION_SCOPE = 'user_impersonation'
+
 
 def get_url() -> str:
     user = settings.POSTGRES_USER
@@ -72,8 +74,8 @@ async def root():
     return {"message": "Hello World"}
 
 
-@router.get("/health", dependencies=[Security(azure_scheme, scopes=['user_impersonation'])])
-async def actuator():
+@router.get("/health", dependencies=[Security(azure_scheme, scopes=[USER_IMPERSONATION_SCOPE])])
+async def get_health_status():
     url = get_url()
     return {"status": "UP", "database_connection_url": url}
 
