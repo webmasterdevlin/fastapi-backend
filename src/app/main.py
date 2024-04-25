@@ -4,11 +4,13 @@ from fastapi_azure_auth import SingleTenantAzureAuthorizationCodeBearer
 from fastapi import FastAPI, APIRouter, Security
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.app.features.users import users_routes
+from src.app.features.posts import posts_router
 from src.app.helpers.config import settings
 
 log = logging.getLogger(__name__)
 
-USER_IMPERSONATION_SCOPE = 'user_impersonation'
+USER_IMPERSONATION_SCOPE = "user_impersonation"
 
 
 def get_url() -> str:
@@ -21,15 +23,15 @@ def get_url() -> str:
 
 
 app = FastAPI(
-    openapi_url=f'{settings.API_PREFIX}/openapi.json',
-    swagger_ui_oauth2_redirect_url='/oauth2-redirect',
+    openapi_url=f"{settings.API_PREFIX}/openapi.json",
+    swagger_ui_oauth2_redirect_url="/oauth2-redirect",
     swagger_ui_init_oauth={
-        'usePkceWithAuthorizationCodeGrant': True,
-        'clientId': settings.OPENAPI_CLIENT_ID,
-        'scopes': settings.SCOPE_NAME,
+        "usePkceWithAuthorizationCodeGrant": True,
+        "clientId": settings.OPENAPI_CLIENT_ID,
+        "scopes": settings.SCOPE_NAME,
     },
-    version='1.0.0',
-    description='## Welcome to my API! \n This is my description, written in `markdown`',
+    version="1.0.0",
+    description="## Welcome to my API! \n This is my description, written in `markdown`",
     title=settings.PROJECT_NAME,
 )
 
@@ -47,8 +49,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,  # type: ignore
     allow_credentials=True,  # type: ignore
-    allow_methods=['*'],  # type: ignore
-    allow_headers=['*'],  # type: ignore
+    allow_methods=["*"],  # type: ignore
+    allow_headers=["*"],  # type: ignore
 )
 
 router = APIRouter(
@@ -56,9 +58,9 @@ router = APIRouter(
 )
 
 
-@router.on_event('startup')  # type: ignore
+@router.on_event("startup")  # type: ignore
 async def load_config() -> None:
-    print('Loading OpenID config on startup')
+    print("Loading OpenID config on startup")
     await azure_scheme.openid_config.load_config()
 
 
@@ -68,13 +70,15 @@ async def shutdown_event() -> None:
 
 
 # TODO: Fix 401 Unauthorized error in the frontend
-@router.get("/", dependencies=[Security(azure_scheme, scopes=['user_impersonation'])])
+@router.get("/", dependencies=[Security(azure_scheme, scopes=["user_impersonation"])])
 async def root() -> dict[str, str]:
-    log.info('Root endpoint')
+    log.info("Root endpoint")
     return {"message": "Hello World"}
 
 
-@router.get("/health", dependencies=[Security(azure_scheme, scopes=[USER_IMPERSONATION_SCOPE])])
+@router.get(
+    "/health", dependencies=[Security(azure_scheme, scopes=[USER_IMPERSONATION_SCOPE])]
+)
 async def get_health_status() -> dict[str, str]:
     url = get_url()
     return {"status": "UP", "database_connection_url": url}
@@ -86,6 +90,8 @@ async def say_hello(name: str) -> dict[str, str]:
 
 
 app.include_router(router)
+# app.include_router(posts_router.router, prefix="/posts", tags=["posts"])
+# app.include_router(users_routes.router, prefix="/users", tags=["users"])
 
 # @app.on_event('startup')
 # async def load_config() -> None:

@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Optional, Union
+from typing import Annotated, Optional, Union
 
 from sqlmodel import Session
 
@@ -34,6 +34,7 @@ def get_db() -> Generator[Session, None, None]:
         yield session
 
 
+SessionDep = Annotated[Session, Depends(get_db)]
 
 
 async def validate_is_admin_user(user: User = Depends(azure_scheme)) -> None:
