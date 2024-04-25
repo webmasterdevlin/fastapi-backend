@@ -1,5 +1,4 @@
 {
-    "cSpell.words": [
-        "SQLALCHEMY"
-    ],
+  "cSpell.words": ["SQLALCHEMY"],
+  "python.analysis.autoImportCompletions": true
 }

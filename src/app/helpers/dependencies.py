@@ -2,10 +2,12 @@ import logging
 from datetime import datetime, timedelta
 from typing import Optional, Union
 
+from sqlmodel import Session
+
 from src.app.helpers.config import settings
 from fastapi import Depends
 from fastapi.security.api_key import APIKeyHeader
-
+from collections.abc import Generator
 from fastapi_azure_auth import (
     B2CMultiTenantAuthorizationCodeBearer,
     MultiTenantAzureAuthorizationCodeBearer,
@@ -13,15 +15,25 @@ from fastapi_azure_auth import (
 )
 from fastapi_azure_auth.exceptions import InvalidAuth
 from fastapi_azure_auth.user import User
+from db import engine
 
 log = logging.getLogger(__name__)
 
 
 azure_scheme = SingleTenantAzureAuthorizationCodeBearer(
     app_client_id=settings.APP_CLIENT_ID,
-    scopes={f'api://{settings.APP_CLIENT_ID}/user_impersonation': '**No client secret needed, leave blank**'},
+    scopes={
+        f"api://{settings.APP_CLIENT_ID}/user_impersonation": "**No client secret needed, leave blank**"
+    },
     tenant_id=settings.TENANT_ID,
 )
+
+
+def get_db() -> Generator[Session, None, None]:
+    with Session(engine) as session:
+        yield session
+
+
 
 
 async def validate_is_admin_user(user: User = Depends(azure_scheme)) -> None:
@@ -29,8 +41,8 @@ async def validate_is_admin_user(user: User = Depends(azure_scheme)) -> None:
     Validate that a user is in the `AdminUser` role in order to access the API.
     Raises a 401 authentication error if not.
     """
-    if 'AdminUser' not in user.roles:
-        raise InvalidAuth('User is not an AdminUser')
+    if "AdminUser" not in user.roles:
+        raise InvalidAuth("User is not an AdminUser")
 
 
 class IssuerFetcher:
@@ -52,13 +64,15 @@ class IssuerFetcher:
             # logic to find your allowed tenants and it's issuers here
             # (This example cache in memory for 1 hour)
             self.tid_to_iss = {
-                'intility_tenant_id': 'https://login.microsoftonline.com/intility_tenant/v2.0',
+                "intility_tenant_id": "https://login.microsoftonline.com/intility_tenant/v2.0",
             }
         try:
             return self.tid_to_iss[tid]
         except Exception as error:
-            log.exception('`iss` not found for `tid` %s. Error %s', tid, error)
-            raise InvalidAuth('You must be an Intility customer to access this resource')
+            log.exception("`iss` not found for `tid` %s. Error %s", tid, error)
+            raise InvalidAuth(
+                "You must be an Intility customer to access this resource"
+            )
 
 
 issuer_fetcher = IssuerFetcher()
@@ -66,7 +80,7 @@ issuer_fetcher = IssuerFetcher()
 azure_scheme_auto_error_false = MultiTenantAzureAuthorizationCodeBearer(
     app_client_id=settings.APP_CLIENT_ID,
     scopes={
-        f'api://{settings.APP_CLIENT_ID}/user_impersonation': 'User impersonation',
+        f"api://{settings.APP_CLIENT_ID}/user_impersonation": "User impersonation",
     },
     validate_iss=True,
     iss_callable=issuer_fetcher,
@@ -79,7 +93,7 @@ azure_scheme_auto_error_false_b2c = B2CMultiTenantAuthorizationCodeBearer(
     openapi_token_url=str(settings.TOKEN_URL),
     openid_config_url=str(settings.CONFIG_URL),
     scopes={
-        f'api://{settings.APP_CLIENT_ID}/user_impersonation': 'User impersonation',
+        f"api://{settings.APP_CLIENT_ID}/user_impersonation": "User impersonation",
     },
     validate_iss=True,
     iss_callable=issuer_fetcher,
@@ -87,7 +101,7 @@ azure_scheme_auto_error_false_b2c = B2CMultiTenantAuthorizationCodeBearer(
 )
 
 
-api_key_auth_auto_error_false = APIKeyHeader(name='TEST-API-KEY', auto_error=False)
+api_key_auth_auto_error_false = APIKeyHeader(name="TEST-API-KEY", auto_error=False)
 
 
 async def multi_auth(
@@ -99,9 +113,9 @@ async def multi_auth(
     """
     if azure_auth:
         return azure_auth
-    if api_key == 'JonasIsCool':
+    if api_key == "JonasIsCool":
         return api_key
-    raise InvalidAuth('You must either provide a valid bearer token or API key')
+    raise InvalidAuth("You must either provide a valid bearer token or API key")
 
 
 async def multi_auth_b2c(
@@ -113,6 +127,6 @@ async def multi_auth_b2c(
     """
     if azure_auth:
         return azure_auth
-    if api_key == 'JonasIsCool':
+    if api_key == "JonasIsCool":
         return api_key
-    raise InvalidAuth('You must either provide a valid bearer token or API key')
+    raise InvalidAuth("You must either provide a valid bearer token or API key")

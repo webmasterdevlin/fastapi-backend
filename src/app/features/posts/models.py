@@ -14,13 +14,12 @@ from src.app.features.users.models import User
 #   authorId  Int
 # }
 
+
 # Shared properties
 class PostBase(SQLModel):
     title: str
     content: str | None = None
     published: bool = False
-    author_id: int | None = Field(default=None, foreign_key="user.id", nullable=False)
-    author: User | None = Relationship(back_populates="posts")
 
 
 # Properties to receive on item creation
