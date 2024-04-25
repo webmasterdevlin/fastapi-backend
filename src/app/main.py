@@ -69,19 +69,19 @@ async def shutdown_event() -> None:
 
 # TODO: Fix 401 Unauthorized error in the frontend
 @router.get("/", dependencies=[Security(azure_scheme, scopes=['user_impersonation'])])
-async def root():
+async def root() -> dict[str, str]:
     log.info('Root endpoint')
     return {"message": "Hello World"}
 
 
 @router.get("/health", dependencies=[Security(azure_scheme, scopes=[USER_IMPERSONATION_SCOPE])])
-async def get_health_status():
+async def get_health_status() -> dict[str, str]:
     url = get_url()
     return {"status": "UP", "database_connection_url": url}
 
 
 @router.get("/hello/{name}")
-async def say_hello(name: str):
+async def say_hello(name: str) -> dict[str, str]:
     return {"message": f"Hello {name}"}
 
 
