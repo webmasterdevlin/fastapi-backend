@@ -22,6 +22,7 @@ cachetools = "^5.3.3"
 ruff = "^0.4.1"
 fastapi-azure-auth = "^4.3.1"
 sqlmodel = "^0.0.16"
+sqlalchemy = "^2.0.29"
 
 
 [tool.poetry.group.dev.dependencies]

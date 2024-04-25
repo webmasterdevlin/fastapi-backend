@@ -9,7 +9,7 @@ from src.app.helpers.config import settings
 log = logging.getLogger(__name__)
 
 
-def get_url():
+def get_url() -> str:
     user = settings.POSTGRES_USER
     password = settings.POSTGRES_PASSWORD
     server = settings.POSTGRES_SERVER
@@ -42,26 +42,28 @@ origins = [str(origin) for origin in settings.BACKEND_CORS_ORIGINS]
 prefix = settings.API_PREFIX
 
 app.add_middleware(
-        CORSMiddleware,
-        allow_origins=origins,  # type: ignore
-        allow_credentials=True,  # type: ignore
-        allow_methods=['*'],  # type: ignore
-        allow_headers=['*'],  # type: ignore
-    )
+    CORSMiddleware,
+    allow_origins=origins,  # type: ignore
+    allow_credentials=True,  # type: ignore
+    allow_methods=['*'],  # type: ignore
+    allow_headers=['*'],  # type: ignore
+)
 
 router = APIRouter(
     prefix=prefix,
 )
 
-@router.on_event('startup') # type: ignore
+
+@router.on_event('startup')  # type: ignore
 async def load_config() -> None:
     print('Loading OpenID config on startup')
     await azure_scheme.openid_config.load_config()
 
 
-@router.on_event("shutdown") # type: ignore
-async def shutdown_event():
+@router.on_event("shutdown")  # type: ignore
+async def shutdown_event() -> None:
     print("Application shutdown")
+
 
 # TODO: Fix 401 Unauthorized error in the frontend
 @router.get("/", dependencies=[Security(azure_scheme, scopes=['user_impersonation'])])
@@ -82,8 +84,6 @@ async def say_hello(name: str):
 
 
 app.include_router(router)
-
-
 
 # @app.on_event('startup')
 # async def load_config() -> None:
