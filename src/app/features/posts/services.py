@@ -1,6 +1,6 @@
 # complete crud for post
 from sqlmodel import Session, select
-from src.app.features.posts.models import Post, PostCreate
+from src.app.helpers.models import Post, PostCreate
 
 
 # creating a post

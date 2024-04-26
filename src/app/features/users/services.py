@@ -1,11 +1,11 @@
 # complete crud for user
 from sqlmodel import Session, select
 
-from src.app.features.users.models import UserCreate, User, UserUpdate
+from src.app.helpers.models import UserCreate, User, UserUpdate
 
 
 # creating a user
-def create_user(*, session: Session, user_create: UserCreate) -> User:
+def create_new_user(*, session: Session, user_create: UserCreate) -> User:
     db_obj = User.model_validate(user_create)
     session.add(db_obj)
     session.commit()

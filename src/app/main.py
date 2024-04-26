@@ -90,8 +90,8 @@ async def say_hello(name: str) -> dict[str, str]:
 
 
 app.include_router(router)
-app.include_router(posts_router.router, prefix="/posts", tags=["posts"])
-app.include_router(users_routes.router, prefix="/users", tags=["users"])
+app.include_router(posts_router.router, prefix=prefix, tags=["posts"])
+app.include_router(users_routes.router, prefix=prefix, tags=["users"])
 
 # @app.on_event('startup')
 # async def load_config() -> None:
