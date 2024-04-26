@@ -15,7 +15,7 @@ from src.app.features.posts.models import Post
 
 # Shared properties
 # TODO replace email str with EmailStr when sqlmodel supports it
-class UserBase(SQLModel, table=True):
+class UserBase(SQLModel):
     email: str = Field(max_length=254, unique=True)
     name: str | None = None
 
