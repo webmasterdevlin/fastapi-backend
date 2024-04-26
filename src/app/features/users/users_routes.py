@@ -1,11 +1,11 @@
 from typing import Any
+
 from fastapi import APIRouter
 from sqlmodel import select, func
 
 from src.app.features.users.services import create_new_user
 from src.app.helpers.dependencies import SessionDep
-from src.app.helpers.models import User, UserCreate, UsersPublic
-
+from src.app.schemas.models import User, UserCreate, UsersPublic
 
 router = APIRouter()
 

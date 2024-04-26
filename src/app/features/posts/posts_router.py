@@ -1,10 +1,10 @@
 from typing import Any
+
 from fastapi import APIRouter
 from sqlmodel import select, func
 
 from src.app.helpers.dependencies import SessionDep
-from src.app.helpers.models import Post, PostCreate, PostsPublic
-
+from src.app.schemas.models import Post, PostCreate, PostsPublic
 
 router = APIRouter()
 

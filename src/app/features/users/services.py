@@ -1,7 +1,7 @@
 # complete crud for user
 from sqlmodel import Session, select
 
-from src.app.helpers.models import UserCreate, User, UserUpdate
+from src.app.schemas.models import UserCreate, User, UserUpdate
 
 
 # creating a user
