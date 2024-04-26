@@ -25,4 +25,3 @@ def read_posts(
     )
     posts = session.exec(statement).all()
     return PostsPublic(data=posts, count=count)
-    # return "posts"
