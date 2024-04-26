@@ -15,7 +15,7 @@ from fastapi_azure_auth import (
 )
 from fastapi_azure_auth.exceptions import InvalidAuth
 from fastapi_azure_auth.user import User
-from db import engine
+from src.app.helpers.db import engine
 
 log = logging.getLogger(__name__)
 

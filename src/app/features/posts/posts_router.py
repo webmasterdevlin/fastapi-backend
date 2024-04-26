@@ -2,8 +2,8 @@ from typing import Any
 from fastapi import APIRouter
 from sqlmodel import select, func
 
-from src.app.features.posts.models import Post, PostsPublic
 from src.app.helpers.dependencies import SessionDep
+from src.app.helpers.models import Post, PostsPublic
 
 
 router = APIRouter()
@@ -16,13 +16,13 @@ def read_posts(
     """
     Retrieve posts.
     """
-    # count_statement = (
-    #     select(func.count()).select_from(Post).where(Post.author_id == author_id)
-    # )
-    # count = session.exec(count_statement).one()
-    # statement = (
-    #     select(Post).where(Post.author_id == author_id).offset(skip).limit(limit)
-    # )
-    # posts = session.exec(statement).all()
-    # return PostsPublic(data=posts, count=count)
-    return "posts"
+    count_statement = (
+        select(func.count()).select_from(Post).where(Post.author_id == author_id)
+    )
+    count = session.exec(count_statement).one()
+    statement = (
+        select(Post).where(Post.author_id == author_id).offset(skip).limit(limit)
+    )
+    posts = session.exec(statement).all()
+    return PostsPublic(data=posts, count=count)
+    # return "posts"
