@@ -1,12 +1,12 @@
 # complete crud for user
 from sqlmodel import Session, select
 
-from src.app.schemas.models import UserCreate, User, UserUpdate
+from src.app.schemas.models import User
 
 
 # creating a user
-def create_new_user(*, session: Session, user_create: UserCreate) -> User:
-    db_obj = User.model_validate(user_create)
+def create_new_user(*, session: Session, user: User) -> User:
+    db_obj = User.model_validate(user)
     session.add(db_obj)
     session.commit()
     session.refresh(db_obj)
@@ -35,8 +35,8 @@ def get_user_by_email(*, session: Session, email: str) -> User | None:
 
 
 # updating a user
-def update_user(*, session: Session, db_user: User, user_in: UserUpdate) -> User:
-    user_data = user_in.model_dump(exclude_unset=True)
+def update_user(*, session: Session, db_user: User, updated_user: User) -> User:
+    user_data = updated_user.model_dump(exclude_unset=True)
     db_user.sqlmodel_update(user_data)
     session.add(db_user)
     session.commit()
@@ -45,6 +45,6 @@ def update_user(*, session: Session, db_user: User, user_in: UserUpdate) -> User
 
 
 # deleting a user
-def delete_user(*, session: Session, db_user: User) -> None:
-    session.delete(db_user)
+def delete_user(*, session: Session, removed_user: User) -> None:
+    session.delete(removed_user)
     session.commit()

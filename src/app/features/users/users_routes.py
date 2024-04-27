@@ -1,11 +1,12 @@
+from .services import update_user, create_new_user
+
 from typing import Any
 
 from fastapi import APIRouter
 from sqlmodel import select, func
 
-from src.app.features.users.services import create_new_user
 from src.app.helpers.dependencies import SessionDep
-from src.app.schemas.models import User, UserCreate, UsersPublic
+from src.app.schemas.models import User, UsersPublic
 
 router = APIRouter()
 
@@ -34,7 +35,6 @@ def read_user_by_id(session: SessionDep, user_id: int) -> Any:
     return user
 
 
-# 3. Add a route to retrieve a user by email
 @router.get("/users/email/{email}", response_model=User)
 def read_user_by_email(session: SessionDep, email: str) -> Any:
     """
@@ -45,11 +45,29 @@ def read_user_by_email(session: SessionDep, email: str) -> Any:
     return user
 
 
-# 4. Add a route to create a user
 @router.post("/users", response_model=User)
-def create_user(session: SessionDep, user_in: UserCreate) -> Any:
+def create_user(session: SessionDep, user: User) -> Any:
     """
     Create a user.
     """
-    user = create_new_user(session=session, user_create=user_in)
-    return user
+    return create_new_user(session=session, user=user)
+
+
+@router.put("/users/{user_id}", response_model=User)
+def put_user(session: SessionDep, user_id: int, user: User) -> Any:
+    """
+    Update a user.
+    """
+    return update_user(session=session, db_user=user, updated_user=user)
+
+
+@router.delete("/users/{user_id}")
+def delete_user(session: SessionDep, user_id: int) -> Any:
+    """
+    Delete a user.
+    """
+    statement = select(User).where(User.id == user_id)
+    user = session.exec(statement).first()
+    session.delete(user)
+    session.commit()
+    return None

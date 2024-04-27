@@ -1,12 +1,12 @@
 # complete crud for post
 from sqlmodel import Session, select
 
-from src.app.schemas.models import Post, PostCreate
+from src.app.schemas.models import Post
 
 
 # creating a post
-def create_post(*, session: Session, post_in: PostCreate, author_id: int) -> Post:
-    db_post = Post.model_validate(post_in, update={"author_id": author_id})
+def create_new_post(*, session: Session, post: Post, author_id: int) -> Post:
+    db_post = Post.model_validate(post, update={"author_id": author_id})
     session.add(db_post)
     session.commit()
     session.refresh(db_post)
@@ -14,8 +14,8 @@ def create_post(*, session: Session, post_in: PostCreate, author_id: int) -> Pos
 
 
 # updating a post
-def update_post(*, session: Session, db_post: Post, post_in: PostCreate) -> Post:
-    post_data = post_in.model_dump(exclude_unset=True)
+def update_post(*, session: Session, db_post: Post, post: Post) -> Post:
+    post_data = post.model_dump(exclude_unset=True)
     db_post.sqlmodel_update(post_data)
     session.add(db_post)
     session.commit()
@@ -38,6 +38,6 @@ def get_all_posts(*, session: Session) -> list[Post]:
 
 
 # deleting a post
-def delete_post(*, session: Session, db_post: Post) -> None:
-    session.delete(db_post)
+def delete_post(*, session: Session, post: Post) -> None:
+    session.delete(post)
     session.commit()

@@ -1,12 +1,12 @@
 import logging
-from fastapi_azure_auth import SingleTenantAzureAuthorizationCodeBearer
 
+from fastapi_azure_auth import SingleTenantAzureAuthorizationCodeBearer
 from fastapi import FastAPI, APIRouter, Security
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.app.features.users import users_routes
-from src.app.features.posts import posts_router
-from src.app.helpers.config import settings
+from .features.users import users_routes
+from .features.posts import posts_router
+from .helpers.config import settings
 
 log = logging.getLogger(__name__)
 

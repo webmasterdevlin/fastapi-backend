@@ -1,6 +1,8 @@
 import logging
+
 from sqlmodel import create_engine, Session, SQLModel
-from src.app.helpers.config import settings
+
+from .config import settings
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
