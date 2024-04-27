@@ -1,11 +1,12 @@
 # complete crud for post
+from fastapi import HTTPException
 from sqlmodel import Session, select
 
-from src.app.schemas.models import Post
+from src.app.schemas.models import Post, PostCreate
 
 
 # creating a post
-def create_new_post(*, session: Session, post: Post, author_id: int) -> Post:
+def create_new_post(*, session: Session, post: PostCreate, author_id: int) -> Post:
     db_post = Post.model_validate(post, update={"author_id": author_id})
     session.add(db_post)
     session.commit()
@@ -14,13 +15,17 @@ def create_new_post(*, session: Session, post: Post, author_id: int) -> Post:
 
 
 # updating a post
-def update_post(*, session: Session, db_post: Post, post: Post) -> Post:
-    post_data = post.model_dump(exclude_unset=True)
-    db_post.sqlmodel_update(post_data)
-    session.add(db_post)
+def update_post(*, session: Session, id: int, updated_post: Post) -> Post:
+    updated_post = session.get(Post, id)  # type: ignore
+    if not updated_post:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    update_dict = updated_post.model_dump(exclude_unset=True)
+    updated_post.sqlmodel_update(update_dict)
+    session.add(updated_post)
     session.commit()
-    session.refresh(db_post)
-    return db_post
+    session.refresh(updated_post)
+    return updated_post
 
 
 # getting a post by id

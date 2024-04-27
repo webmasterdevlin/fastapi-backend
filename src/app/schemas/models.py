@@ -37,6 +37,11 @@ class Post(PostBase, table=True):
     author: User | None = Relationship(back_populates="posts")
 
 
+class PostCreate(PostBase):
+    title: str
+    content: str
+
+
 class PostsPublic(SQLModel):
     data: list[Post]
     count: int
