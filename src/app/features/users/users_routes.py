@@ -1,58 +1,33 @@
-from .services import update_user, create_new_user
+from fastapi.responses import JSONResponse
+from .services import get_user_by_id, update_user, create_new_user
 
 from typing import Any
 
 from fastapi import APIRouter
-from sqlmodel import select, func
 
 from src.app.helpers.dependencies import SessionDep
-from src.app.schemas.models import User, UsersPublic
+from src.app.schemas.models import User
 
 router = APIRouter()
 
 
-# 1. Add a route to retrieve users
-@router.get("/users", response_model=UsersPublic)
-def read_users(session: SessionDep, skip: int = 0, limit: int = 10) -> Any:
-    """
-    Retrieve users.
-    """
-    count_statement = select(func.count()).select_from(User)
-    count = session.exec(count_statement).one()
-    statement = select(User).offset(skip).limit(limit)
-    users = session.exec(statement).all()
-    return UsersPublic(data=users, count=count)  # type: ignore
-
-
-# 2. Add a route to retrieve a user by id
 @router.get("/users/{user_id}", response_model=User)
 def read_user_by_id(session: SessionDep, user_id: int) -> Any:
     """
-    Retrieve a user by id.
+    Retrieve a user by id using a url parameter user_id.
     """
-    statement = select(User).where(User.id == user_id)
-    user = session.exec(statement).first()
-    return user
-
-
-@router.get("/users/email/{email}", response_model=User)
-def read_user_by_email(session: SessionDep, email: str) -> Any:
-    """
-    Retrieve a user by email.
-    """
-    statement = select(User).where(User.email == email)
-    user = session.exec(statement).first()
-    return user
+    return get_user_by_id(session=session, user_id=user_id)
 
 
 @router.post("/users", response_model=User)
 def create_user(session: SessionDep, user: User) -> Any:
     """
-    Create a user.
+    Create a user using a request body user.
     """
     return create_new_user(session=session, user=user)
 
 
+# TODO FIX THIS
 @router.put("/users/{user_id}", response_model=User)
 def put_user(session: SessionDep, user_id: int, user: User) -> Any:
     """
@@ -66,8 +41,10 @@ def delete_user(session: SessionDep, user_id: int) -> Any:
     """
     Delete a user.
     """
-    statement = select(User).where(User.id == user_id)
-    user = session.exec(statement).first()
-    session.delete(user)
-    session.commit()
-    return None
+    user = get_user_by_id(session=session, user_id=user_id)
+    if not user:
+        return JSONResponse(status_code=404, content={"message": "User not found"})
+    else:
+        session.delete(user)
+        session.commit()
+        return JSONResponse(status_code=204, content={"message": "User deleted"})

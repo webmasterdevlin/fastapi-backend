@@ -1,12 +1,15 @@
 # complete crud for post
+from typing import Any
 from fastapi import HTTPException
-from sqlmodel import Session, select
+from sqlalchemy import Null
+from sqlmodel import select, func
 
-from src.app.schemas.models import Post, PostCreate
+from src.app.helpers.dependencies import SessionDep
+from src.app.schemas.models import Post, PostCreate, PostsPublic
 
 
 # creating a post
-def create_new_post(*, session: Session, post: PostCreate, author_id: int) -> Post:
+def create_new_post(*, session: SessionDep, post: PostCreate, author_id: int) -> Post:
     db_post = Post.model_validate(post, update={"author_id": author_id})
     session.add(db_post)
     session.commit()
@@ -15,7 +18,7 @@ def create_new_post(*, session: Session, post: PostCreate, author_id: int) -> Po
 
 
 # updating a post
-def update_post(*, session: Session, id: int, updated_post: Post) -> Post:
+def update_post(*, session: SessionDep, id: int, updated_post: Post) -> Post:
     updated_post = session.get(Post, id)  # type: ignore
     if not updated_post:
         raise HTTPException(status_code=404, detail="Item not found")
@@ -29,20 +32,29 @@ def update_post(*, session: Session, id: int, updated_post: Post) -> Post:
 
 
 # getting a post by id
-def get_post_by_id(*, session: Session, post_id: int) -> Post | None:
+def get_post_by_id(*, session: SessionDep, post_id: int) -> Post | None:
     statement = select(Post).where(Post.id == post_id)
-    session_post = session.exec(statement).first()
-    return session_post
+    return session.exec(statement).first()
 
 
 # getting all posts
-def get_all_posts(*, session: Session) -> list[Post]:
-    statement = select(Post)
-    session_posts = session.exec(statement).all()
-    return list(session_posts)
+def get_all_posts(
+    *, session: SessionDep, author_id: int, skip: int = 0, limit: int = 10
+) -> Any:
+    count_statement = (
+        select(func.count()).select_from(Post).where(Post.author_id == author_id)
+    )
+    count = session.exec(count_statement).one()
+    if count == 0:
+        return Null
+    statement = (
+        select(Post).where(Post.author_id == author_id).offset(skip).limit(limit)
+    )
+    posts = session.exec(statement).all()
+    return PostsPublic(data=list(posts), count=count)
 
 
 # deleting a post
-def delete_post(*, session: Session, post: Post) -> None:
+def delete_post(*, session: SessionDep, post: Post) -> None:
     session.delete(post)
     session.commit()

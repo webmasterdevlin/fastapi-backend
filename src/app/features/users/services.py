@@ -1,6 +1,7 @@
 # complete crud for user
 from sqlmodel import Session, select
 
+from src.app.helpers.dependencies import SessionDep
 from src.app.schemas.models import User
 
 
@@ -13,18 +14,11 @@ def create_new_user(*, session: Session, user: User) -> User:
     return db_obj
 
 
-# getting all users
-def get_all_users(*, session: Session) -> list[User]:
-    statement = select(User)
-    session_users = session.exec(statement).all()
-    return list(session_users)
-
-
-# getting a user by id
-def get_user_by_id(*, session: Session, user_id: int) -> User | None:
+# get a user by id
+def get_user_by_id(*, session: SessionDep, user_id: int) -> User | None:
     statement = select(User).where(User.id == user_id)
-    session_user = session.exec(statement).first()
-    return session_user
+    user = session.exec(statement).first()
+    return user
 
 
 # getting a user by email

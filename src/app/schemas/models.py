@@ -4,7 +4,7 @@ from sqlmodel import Field, Relationship, SQLModel
 # Shared properties
 class UserBase(SQLModel):
     email: str = Field(max_length=254, unique=True)
-    name: str | None = None
+    name: str
 
 
 # Database model, database table inferred from class name
@@ -13,14 +13,14 @@ class User(UserBase, table=True):
     posts: list["Post"] = Relationship(back_populates="author")
 
 
+class UserCreate(UserBase):
+    email: str
+    name: str
+
+
 # Properties to return via API, id is always required
 class UserPublic(UserBase):
     id: int
-
-
-class UsersPublic(SQLModel):
-    data: list[UserPublic]
-    count: int
 
 
 # Shared properties
