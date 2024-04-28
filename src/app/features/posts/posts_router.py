@@ -55,20 +55,19 @@ def update_post(session: SessionDep, post_id: int, updated_post: Post) -> Any:
     """
     Update a post using a url parameter post_id and a request body updated_post.
     """
-    updated_post = session.get(Post, post_id)  # type: ignore
-    if not updated_post:
+    post = get_post_by_id(session=session, post_id=post_id)
+    if not post:
         raise HTTPException(status_code=404, detail="Item not found")
 
     update_dict = updated_post.model_dump(exclude_unset=True)
-    updated_post.sqlmodel_update(update_dict)
-    session.add(updated_post)
+    post.sqlmodel_update(update_dict)
     session.commit()
-    session.refresh(updated_post)
-    return updated_post
+    session.refresh(post)
+    return post
 
 
-@router.delete("/posts/{post_id}", response_model=None)
-def delete_post(session: SessionDep, post_id: int) -> Any:
+@router.delete("/posts/{post_id}")
+def delete_post(session: SessionDep, post_id: int) -> JSONResponse:
     """
     Delete a post using a url parameter post_id.
     """
@@ -78,4 +77,4 @@ def delete_post(session: SessionDep, post_id: int) -> Any:
     else:
         session.delete(post)
         session.commit()
-        return None
+        return JSONResponse(status_code=204, content={"message": "Post deleted"})

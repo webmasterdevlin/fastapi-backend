@@ -28,12 +28,12 @@ def create_user(session: SessionDep, user: User) -> Any:
 
 
 # TODO FIX THIS
-@router.put("/users/{user_id}", response_model=User)
+@router.put("/users/{user_id}")
 def put_user(session: SessionDep, user_id: int, user: User) -> Any:
     """
     Update a user.
     """
-    return update_user(session=session, db_user=user, updated_user=user)
+    return update_user(session=session, user_id=user_id, updated_user=user)
 
 
 @router.delete("/users/{user_id}")

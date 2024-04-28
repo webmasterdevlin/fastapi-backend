@@ -1,11 +1,10 @@
-# complete crud for user
+from fastapi import HTTPException
 from sqlmodel import Session, select
 
 from src.app.helpers.dependencies import SessionDep
 from src.app.schemas.models import User
 
 
-# creating a user
 def create_new_user(*, session: Session, user: User) -> User:
     db_obj = User.model_validate(user)
     session.add(db_obj)
@@ -14,28 +13,28 @@ def create_new_user(*, session: Session, user: User) -> User:
     return db_obj
 
 
-# get a user by id
 def get_user_by_id(*, session: SessionDep, user_id: int) -> User | None:
     statement = select(User).where(User.id == user_id)
     user = session.exec(statement).first()
     return user
 
 
-# getting a user by email
 def get_user_by_email(*, session: Session, email: str) -> User | None:
     statement = select(User).where(User.email == email)
     session_user = session.exec(statement).first()
     return session_user
 
 
-# updating a user
-def update_user(*, session: Session, db_user: User, updated_user: User) -> User:
-    user_data = updated_user.model_dump(exclude_unset=True)
-    db_user.sqlmodel_update(user_data)
-    session.add(db_user)
+def update_user(*, session: Session, user_id: int, updated_user: User) -> User:
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user_dict = updated_user.model_dump(exclude_unset=True)
+    user.sqlmodel_update(user_dict)
     session.commit()
-    session.refresh(db_user)
-    return db_user
+    session.refresh(user)
+    return user
 
 
 # deleting a user
