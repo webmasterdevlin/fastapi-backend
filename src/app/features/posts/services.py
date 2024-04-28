@@ -1,5 +1,4 @@
 from typing import Any
-from fastapi import HTTPException
 from sqlalchemy import Null
 from sqlmodel import select, func
 

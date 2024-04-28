@@ -16,6 +16,8 @@ def create_new_user(*, session: Session, user: User) -> User:
 def get_user_by_id(*, session: SessionDep, user_id: int) -> User | None:
     statement = select(User).where(User.id == user_id)
     user = session.exec(statement).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
     return user
 
 
@@ -38,6 +40,10 @@ def update_user(*, session: Session, user_id: int, updated_user: User) -> User:
 
 
 # deleting a user
-def delete_user(*, session: Session, removed_user: User) -> None:
-    session.delete(removed_user)
-    session.commit()
+def remove_user_by_id(*, session: Session, user_id: int) -> None:
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    else:
+        session.delete(user)
+        session.commit()

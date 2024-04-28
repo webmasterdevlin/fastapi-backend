@@ -1,5 +1,4 @@
-from fastapi.responses import JSONResponse
-from .services import get_user_by_id, update_user, create_new_user
+from .services import get_user_by_id, remove_user_by_id, update_user, create_new_user
 
 from typing import Any
 
@@ -17,17 +16,14 @@ def read_user_by_id(session: SessionDep, user_id: int) -> Any:
     Retrieve a user by their ID.
 
     Args:
-        session (SessionDep): The database session.
+        session (SessionDep): The database session dependency.
         user_id (int): The ID of the user to retrieve.
 
     Returns:
-        Any: The user object if found, otherwise a JSON response with a 404 status code and a message indicating that the user was not found.
+        Any: The user object.
+
     """
-    user = get_user_by_id(session=session, user_id=user_id)
-    if not user:
-        return JSONResponse(status_code=404, content={"message": "User not found"})
-    else:
-        return user
+    return get_user_by_id(session=session, user_id=user_id)
 
 
 @router.post("/users", response_model=User, tags=["users"])
@@ -73,14 +69,6 @@ def delete_user(session: SessionDep, user_id: int) -> Any:
         user_id (int): The ID of the user to delete.
 
     Returns:
-        JSONResponse: A JSON response indicating the result of the deletion.
-            If the user is not found, a 404 status code is returned with a message.
-            If the user is successfully deleted, a 204 status code is returned with a message.
+        Any: The result of removing the user.
     """
-    user = session.get(User, user_id)
-    if not user:
-        return JSONResponse(status_code=404, content={"message": "User not found"})
-    else:
-        session.delete(user)
-        session.commit()
-        return JSONResponse(status_code=204, content={"message": "User deleted"})
+    return remove_user_by_id(session=session, user_id=user_id)
