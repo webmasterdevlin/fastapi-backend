@@ -1,5 +1,5 @@
 import logging
-
+from pydantic import BaseModel, Field
 from fastapi_azure_auth import SingleTenantAzureAuthorizationCodeBearer
 from fastapi import FastAPI, APIRouter, Security
 from fastapi.middleware.cors import CORSMiddleware
@@ -53,6 +53,19 @@ app.add_middleware(
     allow_headers=["*"],  # type: ignore
 )
 
+
+class UserDTO(BaseModel):
+    name: str
+    age: int
+    is_active: bool = Field(..., alias="isActive")
+
+    class Config:
+        allow_population_by_field_name = True
+        # To ensure both snake_case and camelCase can be used during object creation
+        orm_mode = True
+        # If working with ORMs that do not use Pydantic directly
+
+
 router = APIRouter(
     prefix=prefix,
 )
@@ -80,6 +93,11 @@ def get_health_status() -> dict[str, str]:
 @router.get("/hello/{name}")
 def say_hello(name: str) -> dict[str, str]:
     return {"message": f"Hello {name}"}
+
+
+@router.post("/dto")
+def make_user(user: UserDTO):
+    return user
 
 
 app.include_router(router)
