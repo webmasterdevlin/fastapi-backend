@@ -2,9 +2,8 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from sqlmodel import select, func
 
-from .services import create_new_post, get_all_posts, get_post_by_id
+from .services import create_new_post, get_all_posts, get_post_by_id, update_post
 from src.app.helpers.dependencies import SessionDep
 from src.app.schemas.models import Post, PostCreate, PostsPublic
 
@@ -31,7 +30,9 @@ def read_post_by_id(session: SessionDep, post_id: int) -> Any:
     """
     Retrieve a post by id using a url parameter post_id.
     """
-    post = get_post_by_id(session=session, post_id=post_id)
+    post = get_post_by_id(
+        session=session, post_id=post_id
+    )  # session.get(Post, post_id) is the same as get_post_by_id but with less error handling
     if post is None:
         return JSONResponse(status_code=404, content={"message": "Post not found"})
     return post
@@ -49,29 +50,24 @@ def create_post(session: SessionDep, post: PostCreate, author_id: int) -> Any:
     )
 
 
-# TODO FIX THIS
-@router.put("/posts/{post_id}", response_model=Post)
-def update_post(session: SessionDep, post_id: int, updated_post: Post) -> Any:
+@router.put("/posts/{post_id}", response_model=Post, tags=["posts"])
+def update_post_by_id(session: SessionDep, post_id: int, updated_post: Post) -> Any:
     """
     Update a post using a url parameter post_id and a request body updated_post.
     """
-    post = get_post_by_id(session=session, post_id=post_id)
+    post = session.get(Post, post_id)
     if not post:
         raise HTTPException(status_code=404, detail="Item not found")
 
-    update_dict = updated_post.model_dump(exclude_unset=True)
-    post.sqlmodel_update(update_dict)
-    session.commit()
-    session.refresh(post)
-    return post
+    return update_post(session=session, post=post, updated_post=updated_post)
 
 
-@router.delete("/posts/{post_id}")
+@router.delete("/posts/{post_id}", tags=["posts"])
 def delete_post(session: SessionDep, post_id: int) -> JSONResponse:
     """
     Delete a post using a url parameter post_id.
     """
-    post = get_post_by_id(session=session, post_id=post_id)
+    post = session.get(Post, post_id)
     if post is None:
         return JSONResponse(status_code=404, content={"message": "Post not found"})
     else:
