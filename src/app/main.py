@@ -54,16 +54,17 @@ app.add_middleware(
 )
 
 
-class UserDTO(BaseModel):
-    name: str
-    age: int
+class User(BaseModel):
+    email: str
+    password: str
     is_active: bool = Field(..., alias="isActive")
 
     class Config:
         allow_population_by_field_name = True
-        # To ensure both snake_case and camelCase can be used during object creation
-        orm_mode = True
-        # If working with ORMs that do not use Pydantic directly
+
+
+class UserDTO(BaseModel):
+    email: str
 
 
 router = APIRouter(
@@ -96,8 +97,10 @@ def say_hello(name: str) -> dict[str, str]:
 
 
 @router.post("/dto")
-def make_user(user: UserDTO):
-    return user
+def make_user(user: User):
+    user_dict = user.model_dump()
+    new_user = UserDTO(**user_dict)
+    return new_user
 
 
 app.include_router(router)
