@@ -14,7 +14,14 @@ router = APIRouter()
 @router.get("/users/{user_id}", response_model=User, tags=["users"])
 def read_user_by_id(session: SessionDep, user_id: int) -> Any:
     """
-    Retrieve a user by id using a url parameter user_id.
+    Retrieve a user by their ID.
+
+    Args:
+        session (SessionDep): The database session.
+        user_id (int): The ID of the user to retrieve.
+
+    Returns:
+        Any: The user object if found, otherwise a JSON response with a 404 status code and a message indicating that the user was not found.
     """
     user = get_user_by_id(session=session, user_id=user_id)
     if not user:
@@ -26,7 +33,15 @@ def read_user_by_id(session: SessionDep, user_id: int) -> Any:
 @router.post("/users", response_model=User, tags=["users"])
 def create_user(session: SessionDep, user: User) -> Any:
     """
-    Create a user using a request body user.
+    Create a new user.
+
+    Args:
+        session (SessionDep): The database session.
+        user (User): The user data.
+
+    Returns:
+        Any: The created user.
+
     """
     return create_new_user(session=session, user=user)
 
@@ -34,7 +49,16 @@ def create_user(session: SessionDep, user: User) -> Any:
 @router.put("/users/{user_id}", response_model=User, tags=["users"])
 def put_user(session: SessionDep, user_id: int, user: User) -> Any:
     """
-    Update a user.
+    Update a user with the specified user_id.
+
+    Args:
+        session (SessionDep): The database session.
+        user_id (int): The ID of the user to update.
+        user (User): The updated user object.
+
+    Returns:
+        Any: The updated user object.
+
     """
     return update_user(session=session, user_id=user_id, updated_user=user)
 
@@ -42,7 +66,16 @@ def put_user(session: SessionDep, user_id: int, user: User) -> Any:
 @router.delete("/users/{user_id}", tags=["users"])
 def delete_user(session: SessionDep, user_id: int) -> Any:
     """
-    Delete a user.
+    Delete a user by their ID.
+
+    Args:
+        session (SessionDep): The database session.
+        user_id (int): The ID of the user to delete.
+
+    Returns:
+        JSONResponse: A JSON response indicating the result of the deletion.
+            If the user is not found, a 404 status code is returned with a message.
+            If the user is successfully deleted, a 204 status code is returned with a message.
     """
     user = session.get(User, user_id)
     if not user:
