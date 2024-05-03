@@ -1,4 +1,5 @@
 from sqlmodel import Field, Relationship, SQLModel
+# from .database import engine
 
 
 # Shared properties
@@ -9,6 +10,7 @@ class UserBase(SQLModel):
 
 # Database model, database table inferred from class name
 class User(UserBase, table=True):
+    __tablename__ = "Brukere"
     id: int | None = Field(default=None, primary_key=True)
     posts: list["Post"] = Relationship(back_populates="author")
 
@@ -32,8 +34,11 @@ class PostBase(SQLModel):
 
 # Database model, database table inferred from class name
 class Post(PostBase, table=True):
+    __tablename__ = "Innlegg"
     id: int | None = Field(default=None, primary_key=True)
-    author_id: int | None = Field(default=None, foreign_key="user.id", nullable=False)
+    author_id: int | None = Field(
+        default=None, foreign_key="Brukere.id", nullable=False
+    )
     author: User | None = Relationship(back_populates="posts")
 
 
@@ -45,3 +50,6 @@ class PostCreate(PostBase):
 class PostsPublic(SQLModel):
     data: list[Post]
     count: int
+
+
+# SQLModel.metadata.create_all(bind=engine)
